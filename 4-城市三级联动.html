@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="./jquery-1.10.2.min.js"></script>
+</head>
+<body>
+	
+
+	<div id="sanji">
+		
+		<select name="pro" id="pro">
+			<option value="-1">--请选择省份--</option>
+		</select>
+
+
+	</div>
+
+	<script>
+		
+	//北京ID =1  ,北京的区的upid都是1
+	//浙江ID =11  ,浙江的市的upid都是11
+	// 温州ID =120 ,温州的区的upid都是120
+	
+	
+
+	//请求的省份的数据
+	$.get(
+		'./Model/index.php',
+
+		{upid: 0},
+
+		function (data) {
+
+			// console.log(data);
+			
+			var str = '';
+			for (var i =0; i<data.length; i++) {
+
+				str += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+
+			}
+
+			$('#pro').append(str);
+
+
+		},
+		'json'
+	);
+
+
+	//给#sanji下面所有select标签绑定change事件
+	$('#sanji').on('change', 'select', function () {
+
+		// alert(1);
+		// alert( $(this).val() );
+		var id = $(this).val();
+
+		var that = $(this);
+
+		//先统计div#sanji有多少个select
+		var size = $('#sanji select').length;
+
+
+		// console.log(size);
+		// console.log(typeof size);
+		switch (size) {
+
+			//
+			case 1:
+				var selectName = 'city';
+				var selectId = 'city';
+			break;
+
+			case 2:
+				var selectName = 'area';
+				var selectId = 'area';
+			break;
+
+			case 3:
+				var selectName = 'stree';
+				var selectId = 'stree';
+
+			break;
+
+			case 4:
+				var selectName = 'flag';
+				var selectId = 'flag';
+
+			break;
+
+			default:
+				var selectName = 'other';
+				var selectId = 'other';
+			break;
+		}
+
+
+		// alert(size);
+
+		//先清除当前点击的select标签后面的所有的select标签
+		that.nextAll('select').remove();
+		
+		$.get(
+			'./Model/index.php',
+			{upid: id},
+			function (data) {
+
+				// console.log(data);
+				
+				var str = '<select name="'+selectName+'" id="'+selectId+'">';
+
+				str += '<option value="-1">--请选择--</option>'
+				for (var i = 0; i<data.length; i++) {
+
+
+					str += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+				}
+
+				str += '</select>';
+
+				//在当前点击的select标签后面加str
+				that.after(str);
+
+
+			},
+			'json'
+		);
+
+
+	});
+
+
+	</script>
+</body>
+</html>
